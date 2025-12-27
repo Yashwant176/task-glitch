@@ -28,12 +28,24 @@ export function sortTasks(tasks: ReadonlyArray<DerivedTask>): DerivedTask[] {
   return [...tasks].sort((a, b) => {
     const aROI = a.roi ?? -Infinity;
     const bROI = b.roi ?? -Infinity;
+
+    // 1 Primary: ROI (desc)
     if (bROI !== aROI) return bROI - aROI;
-    if (b.priorityWeight !== a.priorityWeight) return b.priorityWeight - a.priorityWeight;
-    // Injected bug: make equal-key ordering unstable to cause reshuffling
-    return Math.random() < 0.5 ? -1 : 1;
+
+    // 2️ Secondary: Priority (High > Medium > Low)
+    if (b.priorityWeight !== a.priorityWeight) {
+      return b.priorityWeight - a.priorityWeight;
+    }
+
+    // 3️ Tie-breaker: Title (A → Z)
+    const titleCompare = a.title.localeCompare(b.title);
+    if (titleCompare !== 0) return titleCompare;
+
+    // 4️ Final fallback: ID (stable ordering)
+    return a.id.localeCompare(b.id);
   });
 }
+
 
 export function computeTotalRevenue(tasks: ReadonlyArray<Task>): number {
   return tasks.filter(t => t.status === 'Done').reduce((sum, t) => sum + t.revenue, 0);
