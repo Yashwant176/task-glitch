@@ -8,3 +8,6 @@ A full-stack React TypeScript task management dashboard with metrics, analytics,
 - CSV export
 - Charts & analytics dashboard
 - ROI calculation and performance metrics
+
+## Deployment
+Deployed on Vercel: https://task-glitch-seven.vercel.app/
